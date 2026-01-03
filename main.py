@@ -85,18 +85,18 @@ class HybridRAG:
             self.cache = redis.Redis(host="localhost", port=6379, decode_responses=True)
             self.cache.ping()
             self.cache_type = "redis"
-            logger.info("✅ Redis cache connected")
+            logger.info(" Redis cache connected")
         except:
             self.cache = {}
             self.cache_type = "dict"
-            logger.info("⚠️  Redis unavailable, using in-memory cache")
+            logger.info("  Redis unavailable, using in-memory cache")
         
         # Configure DSPy globally
         dspy.settings.configure(lm=self.llm)
         
         # Compile RAG module with faithfulness optimization
         self.rag = self._compile()
-        logger.info(f"✅ System initialized (z_threshold={z_threshold})")
+        logger.info(f" System initialized (z_threshold={z_threshold})")
     
     def _compile(self):
         
@@ -155,7 +155,7 @@ class HybridRAG:
                 ))
 
         self.qdrant.upsert("docs", points)
-        logger.info(f"✅ Indexed {len(points)} chunks")
+        logger.info(f" Indexed {len(points)} chunks")
         return len(points)
 
     def retrieve(self, query: str, k: int = 5) -> Tuple[str, float]:
@@ -394,12 +394,12 @@ def run_demo():
     print("\n" + "="*70)
     print("Confidence-Adaptive-RAG-Engine")
     print("="*70)
-    print("\n📊 CONFIDENCE SCORING:")
+    print("\n CONFIDENCE SCORING:")
     print("   • Problem: Raw RRF scores ~0.02-0.04 (NOT normalized!)")
     print("   • Solution: Z-score normalization")
     print("   • Threshold: 0.0 (mean)")
     print("   • Above mean → RAG | Below mean → HyDE")
-    print("   • Stable across corpus size changes ✅")
+    print("   • Stable across corpus size changes ")
     print("\n" + "="*70)
     
     # Load environment
@@ -407,24 +407,24 @@ def run_demo():
     api_key = os.getenv("OPENAI_API_KEY")
     
     if not api_key:
-        print("\n❌ Error: OPENAI_API_KEY not found")
+        print("\n Error: OPENAI_API_KEY not found")
         print("   Set it in .env file or: export OPENAI_API_KEY=your-key")
         return
     
     try:
         # Initialize with z-score threshold
-        print("\n⚙️  Initializing system...")
+        print("\nInitializing system...")
         rag = HybridRAG(api_key, z_threshold=0.0)
-        print(f"   ✅ Z-score threshold: {rag.threshold} (mean)")
-        print(f"   ✅ Cache: {rag.cache_type.upper()}")
+        print(f"    Z-score threshold: {rag.threshold} (mean)")
+        print(f"    Cache: {rag.cache_type.upper()}")
         
         # Scrape documents
-        print("\n📥 Fetching documents...")
+        print("\n Fetching documents...")
         documents = scrape_urls(DEFAULT_URLS, rate_limit=1.5)
         
         # Fallback documents with proper metadata structure
         if not documents:
-            print("   ⚠️  Using fallback documents (scraping failed)")
+            print("     Using fallback documents (scraping failed)")
             documents = [
                 {
                     "text": "FastAPI is a modern Python web framework for building APIs with automatic validation and documentation.",
@@ -447,9 +447,9 @@ def run_demo():
             ]
         
         # Index
-        print("\n📚 Indexing knowledge base...")
+        print("\n Indexing knowledge base...")
         chunks = rag.index(documents)
-        print(f"   ✅ Indexed {chunks} chunks from {len(documents)} sources")
+        print(f"    Indexed {chunks} chunks from {len(documents)} sources")
         
         # Demo queries
         print("\n" + "="*70)
@@ -475,25 +475,25 @@ def run_demo():
             
             # Display routing decision
             if source == "cache":
-                print(f"   ⚡ CACHED (instant)")
+                print(f"    CACHED (instant)")
             elif source == "hyde":
-                print(f"   🔄 HyDE (z={z_score:.2f} < {rag.threshold})")
+                print(f"    HyDE (z={z_score:.2f} < {rag.threshold})")
             else:
-                print(f"   ✅ RAG (z={z_score:.2f} ≥ {rag.threshold})")
+                print(f"    RAG (z={z_score:.2f} ≥ {rag.threshold})")
             
-            print(f"   ⏱️  {latency:.0f}ms")
-            print(f"   💬 {answer[:80]}...")
+            print(f"     {latency:.0f}ms")
+            print(f"    {answer[:80]}...")
             
             # Calculate faithfulness for RAG queries
             if source == "rag" and z_score is not None:
                 context, _ = rag.retrieve(question)
                 faith = rag.faithfulness(answer, context)
                 faithfulness_scores.append(faith)
-                print(f"   🎯 Faithfulness: {faith:.1%}")
+                print(f"    Faithfulness: {faith:.1%}")
         
         # Evaluation
         print("\n" + "="*70)
-        print("📊 SYSTEM EVALUATION")
+        print(" SYSTEM EVALUATION")
         print("="*70)
         
         test_cases = [
@@ -506,19 +506,19 @@ def run_demo():
         avg_faith = np.mean(faithfulness_scores) if faithfulness_scores else 0.0
         
         # Results
-        print("\n🎯 RETRIEVAL METRICS:")
+        print("\n RETRIEVAL METRICS:")
         print(f"   Precision@5:  {metrics['precision@5']:.1%}")
         print(f"   Recall@5:     {metrics['recall@5']:.1%}")
         print(f"   F1 Score:     {metrics['f1@5']:.1%}")
         print(f"   MRR:          {metrics['mrr']:.1%}")
         print(f"   Faithfulness: {avg_faith:.1%}")
         
-        print("\n⚡ ROUTING BREAKDOWN:")
+        print("\n ROUTING BREAKDOWN:")
         print(f"   RAG:   {(stats['rag']/stats['total']):.1%}")
         print(f"   HyDE:  {stats['hyde_rate']:.1%}")
         print(f"   Cache: {stats['cache_hit_rate']:.1%}")
         
-        print("\n💰 COST ANALYSIS:")
+        print("\n COST ANALYSIS:")
         cost_no_cache = 0.002
         cost_with_cache = cost_no_cache * (1 - stats['cache_hit_rate'])
         savings = (1 - cost_with_cache / cost_no_cache) * 100
@@ -536,7 +536,9 @@ def run_demo():
         import traceback
         traceback.print_exc()
 
+# ============================================================================
+# Entry Point
+# ============================================================================
 
 if __name__ == "__main__":
-
     run_demo()
