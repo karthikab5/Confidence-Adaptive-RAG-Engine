@@ -236,7 +236,7 @@ MIT License - see [LICENSE](LICENSE)
 ## 📧 Contact
 
 - GitHub: https://github.com/karthikab5
-- LinkedIn: https://linkedin.com/in/your-profile](https://www.linkedin.com/in/karthika-240883349/
+- LinkedIn: https://www.linkedin.com/in/karthika-240883349/
 - Email: karthikab214@gmail.com
 
 ---
