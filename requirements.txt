@@ -1,0 +1,29 @@
+#LLM & Embeddings
+langchain-openai==0.2.9
+openai==1.58.1
+
+# Vector Database
+qdrant-client==1.12.1
+
+# Embeddings
+fastembed==0.4.2
+
+# DSPy Framework
+dspy-ai==2.5.42
+
+# Caching
+redis==5.2.1
+
+# Web Scraping
+requests==2.32.3
+beautifulsoup4==4.12.3
+lxml==5.3.0
+
+# Text Processing
+langchain-text-splitters==0.3.4
+langchain-core==0.3.28
+
+# Utilities
+python-dotenv==1.0.1
+numpy==1.26.4
+
